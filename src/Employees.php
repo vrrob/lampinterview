@@ -11,7 +11,7 @@ class Employees {
     public $employees = array(
         array('Name' => 'Linus Duran',   'RoleIDs' => '1'),     // Linus is just a peon.
         array('Name' => 'Brennan Odom',  'RoleIDs' => '2,3'),   // Brennan is a human and a manager.
-        array('Name' => 'Mary Chandler', 'RoleIDs' => '13,3')   // Mary is a human and a CEO.
+        array('Name' => 'Mary Chandler', 'RoleIDs' => '3,13')   // Mary is a human and a CEO.
     );
 
     // Takes a comma-separated string of Role IDs and returns an array
