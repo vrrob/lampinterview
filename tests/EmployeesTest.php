@@ -1,7 +1,9 @@
 <?php
 
-class EmployeesTest extends PHPUnit_Framework_TestCase {
-    public function test1() {
+use PHPUnit\Framework\TestCase;
+
+class EmployeesTest extends TestCase {
+    public function testBossNotInsultedByBeingCalledPeon() {
         $employees = new Employees();
 
         $expected = array(
