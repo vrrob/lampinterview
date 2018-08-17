@@ -1,2 +1,5 @@
 # composer
 /vendor/*
+
+# all patch files
+**/*.patch
