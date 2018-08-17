@@ -4,7 +4,7 @@
 
 Run `./vendor/bin/phpunit --bootstrap vendor/autoload.php --testdox tests`.
 
-The test is failing!
+The tests are failing!
 
 Provide a patch file that resolves the issue.
 
