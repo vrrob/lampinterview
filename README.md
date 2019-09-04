@@ -14,7 +14,7 @@ Write a document describing any problems you see in `src/Feedback.php` and how w
 
 ## Task 3: Database: "What's wrong with this code?"
 
----
+```
 <?php
 $host = 'mysql';
 
@@ -40,7 +40,8 @@ try {
 } catch (\PDOException $e) {
     throw new \PDOException($e->getMessage(), (int)$e->getCode());
 }
----
+```
+
 ## Submitting solutions
 
 1. Clone the repository
