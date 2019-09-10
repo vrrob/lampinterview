@@ -1,0 +1,58 @@
+<?php
+
+/* A piece of a payment processing module from the past */
+
+ /**
+   * Store the CC info to the order and process any results that come back from the payment gateway
+   *
+   */
+   
+   ## Currently this bit of code the way it is causes the processor to throw an error, where? ##
+  function before_process() {
+    global $messageStack, $order, $order_totals;
+    $order->info['cc_owner'] = strip_tags($_POST['cc_owner']);
+    if (!strpos($order->info['cc_number'], 'XX')) {
+      $_POST['cc_number'] = preg_replace('/[^0-9]/', '', $_POST['cc_number']);
+      $order->info['cc_number']  = substr($_POST['cc_number'], 0, 6) . str_pad(substr($_POST['cc_number'], -4), strlen($_POST['cc_number'])-10, "X", STR_PAD_LEFT);
+    }
+    $order->info['cc_expires'] = '';
+    $order->info['cc_cvv']     = '***';
+
+    $submit_data = array(
+        'ssl_card_number' => preg_replace('/[^0-9]/', '', $_POST['cc_number']),
+        'ssl_exp_date' => preg_replace('/[^0-9]/', '', $_POST['cc_expires']), // MMYY format
+        'ssl_cvv2cvc2' => (int)($_POST['cc_cvv']),
+        'ssl_cvv2cvc2_indicator' => !empty($_POST['cc_cvv']), // indicates that we are passing a CVV value
+
+        'ssl_amount' => round($order->info['total'], 2),
+        'ssl_transaction_type' => MODULE_PAYMENT_ELAVON_CONVERGE_AUTHORIZATION_TYPE == 'Authorize' ? 'ccauthonly': 'ccsale',
+        'ssl_invoice_number' => $this->get_next_order_id(),
+
+        'ssl_show_form' => 'false', // collect card data onsite
+        'ssl_result_format' => 'ascii', // we can only parse key-value pairs, not an HTML response
+        'ssl_get_token' => 'N',
+        'ssl_add_token' => 'N',
+
+        'ssl_company' => $order->billing['company'],
+        'ssl_first_name' => $order->billing['firstname'],
+        'ssl_last_name' => $order->billing['lastname'],
+        'ssl_avs_address' => $order->billing['street_address'],
+        'ssl_city' => $order->billing['city'],
+        'ssl_state' => $order->billing['state'],
+        'ssl_avs_zip' => $order->billing['postcode'],
+        'ssl_country' => $order->billing['country']['iso_code_3'],
+        'ssl_phone' => $order->customer['telephone'],
+        'ssl_email' => $order->customer['email_address'],
+        'ssl_ship_to_company' => $order->delivery['company'],
+        'ssl_ship_to_first_name' => $order->delivery['firstname'],
+        'ssl_ship_to_last_name' => $order->delivery['lastname'],
+        'ssl_ship_to_address1' => $order->delivery['street_address'],
+        'ssl_ship_to_address2' => $order->delivery['suburb'],
+        'ssl_ship_to_city' => $order->delivery['city'],
+        'ssl_ship_to_state' => $order->delivery['state'],
+        'ssl_ship_to_zip' => $order->delivery['postcode'],
+        'ssl_ship_to_country' => $order->delivery['country']['iso_code_3'],
+        'ssl_ship_to_phone' => $order->customer['telephone'],
+        'ssl_cardholder_ip' => zen_get_ip_address(),
+        'ssl_description' => 'Website Purchase from ' . str_replace('"',"'", STORE_NAME),
+    );
